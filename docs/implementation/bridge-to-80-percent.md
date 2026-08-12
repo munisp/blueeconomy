@@ -1,20 +1,20 @@
-# Bridge from 28.75% to a Defensible 80% Completion Score
+# Bridge from 34.00% to a Defensible 80% Completion Score
 
 ## Target evidence mix
 
-The score before this Rust/Python audit was **28.75%**. The audited traceability source foundation raises the current score to **29.25%**, leaving **50.75 additional weighted percentage points** to reach 80%. Under the published evidence rubric, the following target mix reaches **81.25%** without pretending that every service is already operationally accepted.
+The current verified baseline is **34.00%**, leaving **46.00 weighted percentage points** to reach 80%. The local PostgreSQL evidence integration, Apache Kafka-to-Delta path and complete Rust-safety-to-Kafka-to-Delta pipeline justify only the workstream increases shown below. Under the published evidence rubric, the target mix remains **81.25%** without pretending that any Ministry or partner environment is already operationally accepted.
 
 | Workstream | Weight | Current evidence | Target evidence | Weighted target contribution | Evidence required for target |
 |---|---:|---:|---:|---:|---|
-| Shared platform, security, operations, data governance and Kubernetes | 15% | 55% | 75% | 11.25 | Ministry non-production hybrid Kubernetes environment passes identity, network, observability, security, backup/recovery and cost-allocation tests. |
-| S1 Port interoperability and trusted workflow | 15% | 25% | 100% | 15.00 | One accountable port/NSW/PCS operational owner accepts an end-to-end pilot with real exchanges, receipts, exceptions, recovery and audit evidence. |
+| Shared platform, security, operations, data governance and Kubernetes | 15% | 60% | 75% | 11.25 | Ministry non-production hybrid Kubernetes environment passes identity, network, observability, security, backup/recovery and cost-allocation tests. |
+| S1 Port interoperability and trusted workflow | 15% | 35% | 100% | 15.00 | One accountable port/NSW/PCS operational owner accepts an end-to-end pilot with real exchanges, receipts, exceptions, recovery and audit evidence. |
 | S2 Maritime domain intelligence | 15% | 20% | 75% | 11.25 | Ministry non-production integration with approved vessel/incident/geospatial feeds and analyst workflow passes security, provenance and quality tests. |
 | S3 Maritime finance/CVFF operations | 15% | 15% | 75% | 11.25 | Regulated non-production workflow, TigerBeetle sub-ledger and Mojaloop/payment-participant sandbox reconcile against an authorised institution. |
 | S4 Seafarer credential trust | 10% | 20% | 75% | 7.50 | Approved issuer, credential profile, status/revocation service and verifier are integrated in Ministry non-production. |
 | S5 Fisheries and aquaculture traceability | 10% | 25% | 75% | 7.50 | Authorised harvest/landing/processing/custody records traverse the complete non-production traceability path. |
-| S6 Inland-waterway safety telematics | 10% | 25% | 75% | 7.50 | Approved device/gateway feed, geofence/rule workflow and response case are integrated in Ministry non-production. |
+| S6 Inland-waterway safety telematics | 10% | 50% | 75% | 7.50 | Approved device/gateway feed, geofence/rule workflow and response case are integrated in Ministry non-production. |
 | Central administration and Ministry portal | 10% | 50% | 100% | 10.00 | Ministry identity owner accepts onboarding, maker/checker approval, invitation, group activation, reconciliation, revocation, audit and recovery. |
-| **Total** | **100%** | **29.25%** | — | **81.25%** | At least 80% is achieved only when the evidence above exists. |
+| **Total** | **100%** | **34.00%** | — | **81.25%** | At least 80% is achieved only when the evidence above exists. |
 
 This is not the only possible 80% mix, but it is the most coherent route because it puts the shared platform and every domain into an actual Ministry non-production environment while requiring operational acceptance for the central trust layer and one high-value business pilot.
 
