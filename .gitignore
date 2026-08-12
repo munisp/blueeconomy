@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+integration/*/results/*
+!integration/*/results/.gitkeep
+*.cover.out
+*.coverage.txt
+*.log
+.env
+.env.*
+!.env.example
