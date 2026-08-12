@@ -21,7 +21,7 @@ This score measures implementation against the Unified Blue Economy Platform spe
 | S2: Maritime domain intelligence | 15% | 20% | Lakehouse, geospatial component locks and telemetry integrity controls exist; no authorised feed, analyst casework or spatial intelligence workflow is connected. |
 | S3: Maritime finance/CVFF operations | 15% | 15% | TigerBeetle client verifier and Helm design exist; no legal fund workflow, regulated institution, Mojaloop participant or ledger deployment is connected. |
 | S4: Seafarer credential trust | 10% | 20% | Issuer/JWKS verifier exists; no approved issuer, credential profile or credential lifecycle is connected. |
-| S5: Fisheries and aquaculture traceability | 10% | 20% | Real-record provenance-chain validation exists; no fisheries/aquaculture/custody source is connected. |
+| S5: Fisheries and aquaculture traceability | 10% | 25% | Versioned provenance-chain validation, complete-field chain digest, hash-locked dependencies, deterministic tests, strict static checks and security-audit evidence exist; no fisheries/aquaculture/custody source is connected. |
 | S6: Inland waterway safety telematics | 10% | 25% | Rust payload-integrity validation exists; no telemetry gateway, device identity or safety response workflow is connected. |
 | Central administration, Ministry portal and stakeholder onboarding | 10% | 50% after local integration | Real Go/PostgreSQL/Keycloak service and TypeScript portal exist. The local suite proved PostgreSQL persistence, distinct approval, Keycloak HTTPS service-account token acquisition, invitation delivery to real local SMTP, and Keycloak organization-group activation. |
 
@@ -29,9 +29,9 @@ This score measures implementation against the Unified Blue Economy Platform spe
 
 The current weighted score is the sum of `workstream weight × evidence percentage`. It will be recalculated after each evidence-producing phase. The score cannot increase because a component merely builds; it must satisfy the evidence criteria above.
 
-## Current weighted completion score: **28.75%**
+## Current weighted completion score: **29.25%**
 
-The calculation is `(15×55 + 15×25 + 15×20 + 15×15 + 10×20 + 10×20 + 10×25 + 10×50) ÷ 100 = 28.75%`. This is a conservative source-and-local-integration score. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
+The calculation is `(15×55 + 15×25 + 15×20 + 15×15 + 10×20 + 10×25 + 10×25 + 10×50) ÷ 100 = 29.25%`. The 0.50-point increase reflects S5 reaching the full source-foundation evidence definition after dependency locking, deterministic provenance tests, strict static/security checks and complete-field digest remediation. This is a conservative source-and-local-integration score. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
 
 ## Boundary
 
