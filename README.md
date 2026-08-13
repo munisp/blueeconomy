@@ -20,6 +20,7 @@ The initial release prioritises the secure platform foundation, maritime evidenc
 | [Evidence-Based Completion Scoring](docs/implementation/completion-scoring.md) | The 34.00% source-and-local-integration completion calculation. |
 | [Post-Remediation Production-Readiness Assessment](docs/implementation/audit/production-readiness-assessment-2026-08-13.md) | Feature scores, remediation disposition, financial-integrity boundary and residual-risk register. |
 | [Audit Evidence Register](docs/implementation/audit/evidence-register-2026-08-13.md) | SHA-256 references for retained verification logs and assessed private `main` baselines. |
+| [Repository Release Baseline](docs/implementation/audit/release-baseline-2026-08-13.md) | Remote branch and pull-request convergence, including the workflow publication authorization exception. |
 
 ## Data and secret handling
 
