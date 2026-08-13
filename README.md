@@ -16,6 +16,10 @@ The initial release prioritises the secure platform foundation, maritime evidenc
 |---|---|
 | [Repository Strategy](docs/architecture/repository-strategy.md) | Open-source-first repository portfolio, language boundaries, release model and real-integration test policy. |
 | [Verified Integration Gates](docs/implementation/integration-gates.md) | Evidence required before an external service can be represented as integrated or release-ready. |
+| [Current Implementation State](docs/implementation/current-state.md) | Repository-level published source, local evidence and target-environment boundaries. |
+| [Evidence-Based Completion Scoring](docs/implementation/completion-scoring.md) | The 34.00% source-and-local-integration completion calculation. |
+| [Post-Remediation Production-Readiness Assessment](docs/implementation/audit/production-readiness-assessment-2026-08-13.md) | Feature scores, remediation disposition, financial-integrity boundary and residual-risk register. |
+| [Audit Evidence Register](docs/implementation/audit/evidence-register-2026-08-13.md) | SHA-256 references for retained verification logs and assessed private `main` baselines. |
 
 ## Data and secret handling
 
