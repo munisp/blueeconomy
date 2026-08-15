@@ -17,6 +17,7 @@ run_stage() {
 }
 
 : > "$log"
+run_stage "Central administration and privacy PostgreSQL/Keycloak workflow" bash "$root/blueeconomy-administration-service/integration/run-local.sh"
 run_stage "S1 authenticated PostgreSQL port workflow" bash "$root/blueeconomy-port-interoperability/scripts/verify-local.sh"
 run_stage "S2 authenticated PostgreSQL intelligence workflow" bash "$root/blueeconomy-maritime-intelligence/scripts/verify-local.sh"
 run_stage "S2 authentic Kafka outbox delivery" bash "$root/blueeconomy-maritime-intelligence/scripts/verify-kafka-outbox.sh"
@@ -33,8 +34,8 @@ cat > "$summary" <<JSON
 {
   "generated_at_utc": "${timestamp}",
   "local_control_audit": "passed",
-  "current_weighted_local_evidence_score": 60.50,
-  "gap_to_80_percent": 19.50,
+  "current_weighted_local_evidence_score": 63.00,
+  "gap_to_80_percent": 17.00,
   "verified_local_environments": ["PostgreSQL", "Apache Kafka", "Delta Lake", "single-replica TigerBeetle development cluster"],
   "external_readiness_conditions_not_testable_locally": [
     "Ministry governance, delegated decision authority and operational acceptance",
