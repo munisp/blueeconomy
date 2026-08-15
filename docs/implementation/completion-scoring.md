@@ -14,25 +14,25 @@ This score measures implementation against the Unified Blue Economy Platform spe
 
 ## Workstream weights
 
-| Workstream | Weight | Current pre-integration evidence | Basis |
+| Workstream | Weight | Post-implementation evidence | Basis |
 |---|---:|---:|---|
-| Shared platform, security, operations, data governance and Kubernetes | 15% | 60% | Contracts, GitOps locks and security controls exist; the official Apache Kafka broker now exchanges governed events with the Delta writer through two real consumer groups with confirmed offsets and replay idempotency. No hybrid cluster deployment or Ministry observability evidence exists. |
-| S1: Port interoperability and trusted workflow | 15% | 35% | Immutable evidence controls and contracts exist; a real PostgreSQL integration now proves idempotent package creation, row immutability and one-terminal-decision enforcement. No NSW/PCS/agency adapter, exchange workflow or authoritative source is connected. |
-| S2: Maritime domain intelligence | 15% | 20% | Lakehouse, geospatial component locks and telemetry integrity controls exist; no authorised feed, analyst casework or spatial intelligence workflow is connected. |
-| S3: Maritime finance/CVFF operations | 15% | 15% | TigerBeetle client verifier and Helm design exist; no legal fund workflow, regulated institution, Mojaloop participant or ledger deployment is connected. |
-| S4: Seafarer credential trust | 10% | 20% | Issuer/JWKS verifier exists; no approved issuer, credential profile or credential lifecycle is connected. |
-| S5: Fisheries and aquaculture traceability | 10% | 25% | Versioned provenance-chain validation, complete-field chain digest, hash-locked dependencies, deterministic tests, strict static checks and security-audit evidence exist; no fisheries/aquaculture/custody source is connected. |
+| Shared platform, security, operations, data governance and Kubernetes | 15% | 65% | Real authentication hardening, durable external-operation records, source-locked GitOps and Kafka-to-Delta controls exist. No hybrid cluster deployment or Ministry observability evidence exists. |
+| S1: Port interoperability and trusted workflow | 15% | 50% | Real authenticated PostgreSQL-backed port-call state machine, idempotency/conflict control, optimistic transitions, transactional outbox and OpenAPI contract exist. No NSW/PCS/agency adapter is connected. |
+| S2: Maritime domain intelligence | 15% | 35% | Real maritime-position validation and authenticated PostgreSQL incident lifecycle with source-event idempotency, transitions and outbox evidence exist. No authorised feed or analyst acceptance exists. |
+| S3: Maritime finance/CVFF operations | 15% | 30% | Real TigerBeetle account/pending/post/void primitives and PostgreSQL financial-intent maker/checker, ambiguity and outbox controls exist. No approved ledger deployment, Mojaloop participant, settlement or regulated operating approval exists. |
+| S4: Seafarer credential trust | 10% | 25% | Real JWT/JWKS verification with explicit algorithm allowlisting and protected evidence output exists. No approved issuer or credential lifecycle partner exists. |
+| S5: Fisheries and aquaculture traceability | 10% | 30% | Runtime schema enforcement, chain digest, custody transitions and recall validation exist. No custody source, split/merge genealogy or operational recall integration exists. |
 | S6: Inland waterway safety telematics | 10% | 50% | The Rust validator, official Kafka broker and governed Delta consumer now complete an authentic local protocol path with payload equality, two consumer-group commits and idempotent replay. No approved telemetry gateway, device identity, rules engine or safety response workflow is connected. |
-| Central administration, Ministry portal and stakeholder onboarding | 10% | 50% after local integration | Real Go/PostgreSQL/Keycloak service and TypeScript portal exist. The local suite proved PostgreSQL persistence, distinct approval, Keycloak HTTPS service-account token acquisition, invitation delivery to real local SMTP, and Keycloak organization-group activation. |
+| Central administration, Ministry portal and stakeholder onboarding | 10% | 60% | Real PostgreSQL/Keycloak/SMTP lifecycle, verified caller boundary and durable Keycloak side-effect evidence exist. No Ministry Keycloak/APISIX deployment or operational acceptance exists. |
 
 ## Scoring rule
 
 The current weighted score is the sum of `workstream weight × evidence percentage`. It will be recalculated after each evidence-producing phase. The score cannot increase because a component merely builds; it must satisfy the evidence criteria above.
 
-## Current weighted completion score: **34.00%**
+## Current weighted completion score: **43.50%**
 
-The calculation is `(15×60 + 15×35 + 15×20 + 15×15 + 10×20 + 10×25 + 10×50 + 10×50) ÷ 100 = 34.00%`. The increase from 29.25% is limited to measured evidence: 0.75 points for Kafka-to-Delta shared integration, 1.50 points for the PostgreSQL evidence-store invariants, and 2.50 points for the complete local Rust-to-Kafka-to-Delta safety path. This remains a conservative source-and-local-integration score. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
+The current calculation is `(15×65 + 15×50 + 15×35 + 15×30 + 10×25 + 10×30 + 10×50 + 10×60) ÷ 100 = 43.50%`. The previous 34.00% score remains the historical pre-increment baseline. The new score credits only real source and local integration evidence from the authenticated port-call service, maritime incident service, durable financial-intent store, TigerBeetle primitives, maritime-position validation and hardened shared controls. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
 
 ## Boundary
 
-The completed local PostgreSQL–Keycloak, PostgreSQL evidence-store, Kafka-to-Delta and Rust-safety pipeline tests raise only their stated local evidence. They do not imply that the Ministry’s Keycloak, APISIX, Wazuh, OpenCTI, Kafka, Temporal, PostgreSQL, object store, partners, National Single Window, Mojaloop or TigerBeetle environments have been integrated or accepted.
+The completed local PostgreSQL–Keycloak, PostgreSQL evidence-store, PostgreSQL port-call, PostgreSQL maritime-intelligence, PostgreSQL financial-intent, Kafka-to-Delta and Rust-safety pipeline tests raise only their stated local evidence. They do not imply that the Ministry’s Keycloak, APISIX, Wazuh, OpenCTI, Kafka, Temporal, PostgreSQL, object store, partners, National Single Window, Mojaloop or TigerBeetle environments have been integrated or accepted.
