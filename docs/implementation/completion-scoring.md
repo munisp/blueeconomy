@@ -18,7 +18,7 @@ This score measures implementation against the Unified Blue Economy Platform spe
 |---|---:|---:|---|
 | Shared platform, security, operations, data governance and Kubernetes | 15% | 65% | Real authentication hardening, durable external-operation records, source-locked GitOps and Kafka-to-Delta controls exist. No hybrid cluster deployment or Ministry observability evidence exists. |
 | S1: Port interoperability and trusted workflow | 15% | 50% | Real authenticated PostgreSQL-backed port-call state machine, idempotency/conflict control, optimistic transitions, transactional outbox and OpenAPI contract exist. No NSW/PCS/agency adapter is connected. |
-| S2: Maritime domain intelligence | 15% | 35% | Real maritime-position validation and authenticated PostgreSQL incident lifecycle with source-event idempotency, transitions and outbox evidence exist. No authorised feed or analyst acceptance exists. |
+| S2: Maritime domain intelligence | 15% | 40% | Real maritime-position validation, strict GeoJSON Polygon/MultiPolygon geofence evaluation and authenticated PostgreSQL incident lifecycle with source-event idempotency, transitions and outbox evidence exist. No authorised feed, Sedona/PostGIS deployment or analyst acceptance exists. |
 | S3: Maritime finance/CVFF operations | 15% | 45% | Real TigerBeetle account/pending/post/void primitives, PostgreSQL financial-intent maker/checker and ambiguity/outbox controls, PostgreSQL-backed external statement reconciliation, signed FSPIOP outbound client, callback HTTP boundary and durable PostgreSQL callback state exist. No approved ledger deployment, connected participant/switch, settlement authority or regulated operating approval exists. |
 | S4: Seafarer credential trust | 10% | 30% | Real JWT/JWKS verification with explicit algorithm allowlisting, protected evidence output and optional mandatory JTI hash evidence for status/revocation-capable profiles exists. No approved issuer, status-list/revocation endpoint or credential lifecycle partner exists. |
 | S5: Fisheries and aquaculture traceability | 10% | 35% | Runtime schema enforcement, chain digest, custody transitions, recall validation and explicit split/merge genealogy exist. No custody source or operational recall integration exists. |
@@ -29,9 +29,9 @@ This score measures implementation against the Unified Blue Economy Platform spe
 
 The current weighted score is the sum of `workstream weight × evidence percentage`. It will be recalculated after each evidence-producing phase. The score cannot increase because a component merely builds; it must satisfy the evidence criteria above.
 
-## Current weighted completion score: **46.75%**
+## Current weighted completion score: **47.50%**
 
-The current calculation is `(15×65 + 15×50 + 15×35 + 15×45 + 10×30 + 10×35 + 10×50 + 10×60) ÷ 100 = 46.75%`. The previous 44.75% score remains the historical pre-Mojaloop/JTI baseline, 44.00% remains the post-genealogy baseline, 43.50% remains the prior pre-genealogy baseline, and 34.00% remains the prior major baseline. The new 2.00-point increase credits only the real signed FSPIOP adapter/callback boundary, durable callback persistence, fail-closed participant configuration and explicit JTI status evidence. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
+The current calculation is `(15×65 + 15×50 + 15×40 + 15×45 + 10×30 + 10×35 + 10×50 + 10×60) ÷ 100 = 47.50%`. The previous 46.75% score remains the historical pre-geofence baseline, 44.75% remains the pre-Mojaloop/JTI baseline, 44.00% remains the post-genealogy baseline, 43.50% remains the prior pre-genealogy baseline, and 34.00% remains the prior major baseline. The new 0.75-point increase credits only the real strict GeoJSON geofence evaluator and regression evidence in S2. It is **not** a production-readiness score, a partner-integration score, or an operational-acceptance score.
 
 ## Boundary
 
