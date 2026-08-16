@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 from pathlib import Path
 
@@ -29,7 +30,8 @@ def main() -> None:
     first = read_object(arguments.first_report)
     second = read_object(arguments.second_report)
     table = DeltaTable(arguments.table)
-    rows = table.to_pyarrow_table().to_pylist()
+    arrow_table = table.to_pyarrow_table()
+    rows = arrow_table.to_pylist()
     if len(rows) != 1:
         raise ValueError(f"expected one Delta row after Kafka replay, got {len(rows)}")
     stored_payload = json.loads(rows[0]["payload_json"])
@@ -58,6 +60,10 @@ def main() -> None:
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, sort_keys=True))
+    del rows
+    del arrow_table
+    del table
+    gc.collect()
 
 
 if __name__ == "__main__":
