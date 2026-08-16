@@ -34,8 +34,8 @@ cat > "$summary" <<JSON
 {
   "generated_at_utc": "${timestamp}",
   "local_control_audit": "passed",
-  "current_weighted_local_evidence_score": 65.75,
-  "gap_to_80_percent": 14.25,
+  "current_weighted_local_evidence_score": 66.25,
+  "gap_to_80_percent": 13.75,
   "verified_local_environments": ["PostgreSQL", "Apache Kafka", "Delta Lake", "single-replica TigerBeetle development cluster"],
   "external_readiness_conditions_not_testable_locally": [
     "Ministry governance, delegated decision authority and operational acceptance",
