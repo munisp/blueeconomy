@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: apisix}
+spec:
+  replicas: 3
+  selector: {matchLabels: {app: apisix}}
+  template:
+    metadata: {labels: {app: apisix}}
+    spec:
+      serviceAccountName: platform-runtime
+      containers:
+      - name: apisix
+        image: apache/apisix:${APISIX_IMAGE_TAG}
+        ports: [{containerPort: 9080, name: http}]
+        securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, runAsNonRoot: true, capabilities: {drop: ["ALL"]}}
+        envFrom: [{secretRef: {name: apisix-runtime-secrets}}]
+        readinessProbe: {httpGet: {path: /apisix/status, port: http}}
+        resources: {requests: {cpu: "500m", memory: "512Mi"}, limits: {cpu: "2", memory: "1Gi"}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: apisix}
+spec: {selector: {app: apisix}, ports: [{name: http, port: 9080, targetPort: http}]}

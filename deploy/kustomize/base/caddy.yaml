@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: caddy-edge}
+spec:
+  replicas: 3
+  selector: {matchLabels: {app: caddy-edge}}
+  template:
+    metadata: {labels: {app: caddy-edge}}
+    spec:
+      serviceAccountName: platform-runtime
+      securityContext: {seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: caddy
+        image: caddy:${CADDY_IMAGE_TAG}
+        args: ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+        ports: [{containerPort: 443, name: https}]
+        securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, runAsNonRoot: true, capabilities: {drop: ["ALL"]}}
+        resources: {requests: {cpu: "250m", memory: "256Mi"}, limits: {cpu: "1", memory: "512Mi"}}
+        readinessProbe: {httpGet: {path: /healthz, port: https, scheme: HTTPS}, initialDelaySeconds: 5}
+        volumeMounts: [{name: config, mountPath: /etc/caddy, readOnly: true},{name: data, mountPath: /data}]
+      volumes: [{name: config, configMap: {name: caddy-config}},{name: data, emptyDir: {}}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: caddy-edge}
+spec: {selector: {app: caddy-edge}, ports: [{name: https, port: 443, targetPort: https}], type: ClusterIP}
