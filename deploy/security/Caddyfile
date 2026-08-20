@@ -1,0 +1,62 @@
+{
+	# Environment-provided trust roots, contact and certificate automation must be configured by deployment.
+	email {$ACME_EMAIL}
+	servers {
+		metrics
+	}
+}
+
+(platform_security) {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		-Server
+	}
+	request_body {
+		max_size 2MB
+	}
+}
+
+{$PLATFORM_PUBLIC_HOST} {
+	import platform_security
+	encode zstd gzip
+	# Edge mTLS is mandatory for authority/partner APIs; public portal is routed separately.
+	@partner path /partner/* /v1/nsw/*
+	handle @partner {
+		tls_client_auth {
+			mode require_and_verify
+			trust_pool file {$PARTNER_MTLS_CA_FILE}
+		}
+		reverse_proxy {$APISIX_UPSTREAM} {
+			transport http {
+				read_timeout 30s
+				write_timeout 30s
+			}
+		}
+	}
+	@api path /v1/*
+	handle @api {
+		# Coarse edge limit; APISIX applies identity-aware limits and quotas.
+		rate_limit {
+			zone api_edge
+			key {remote_host}
+			events 60
+			window 1m
+		}
+		reverse_proxy {$APISIX_UPSTREAM}
+	}
+	respond /healthz 200
+	respond "not found" 404
+}
+
+# Deployment must bind a separate admin listener reachable only from the management network.
+{$PLATFORM_ADMIN_HOST} {
+	import platform_security
+	basicauth {
+		{$CADDY_ADMIN_USER} {$CADDY_ADMIN_PASSWORD_HASH}
+	}
+	reverse_proxy {$APISIX_ADMIN_UPSTREAM}
+}

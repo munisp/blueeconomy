@@ -1,0 +1,82 @@
+routes:
+  - id: platform-s1
+    uri: /v1/port/*
+    methods: [GET, POST, PUT]
+    upstream_id: s1-port-interoperability
+    plugins:
+      openid-connect:
+        discovery: ${KEYCLOAK_DISCOVERY_URL}
+        client_id: platform-apisix
+        client_secret: ${APISIX_OIDC_CLIENT_SECRET}
+        bearer_only: true
+        realm: blueeconomy
+        required_scopes: [s1]
+      limit-req:
+        rate: 20
+        burst: 40
+        rejected_code: 429
+        key_type: var_combination
+        key: "$consumer_name$remote_addr"
+      proxy-rewrite:
+        headers:
+          set:
+            X-Forwarded-Proto: https
+            X-Platform-Gateway: apisix
+      opa:
+        host: ${OPA_URL}
+        policy: blueeconomy/http/allow
+  - id: partner-nsw
+    uri: /v1/nsw/*
+    methods: [POST]
+    upstream_id: s1-port-interoperability
+    plugins:
+      openid-connect:
+        discovery: ${KEYCLOAK_DISCOVERY_URL}
+        bearer_only: true
+        required_scopes: [partner.nsw]
+      limit-req:
+        rate: 10
+        burst: 20
+        rejected_code: 429
+        key_type: var
+        key: remote_addr
+      opa:
+        host: ${OPA_URL}
+        policy: blueeconomy/http/allow
+  - id: platform-s2
+    uri: /v1/feed-sources/*
+    methods: [GET, POST]
+    upstream_id: s2-maritime-intelligence
+    plugins:
+      openid-connect:
+        discovery: ${KEYCLOAK_DISCOVERY_URL}
+        bearer_only: true
+        required_scopes: [s2]
+      limit-req:
+        rate: 15
+        burst: 30
+        rejected_code: 429
+        key_type: var_combination
+        key: "$consumer_name$remote_addr"
+      opa:
+        host: ${OPA_URL}
+        policy: blueeconomy/http/allow
+upstreams:
+  - id: s1-port-interoperability
+    type: roundrobin
+    nodes:
+      "${S1_UPSTREAM_HOST}:${S1_UPSTREAM_PORT}": 1
+    checks:
+      active:
+        type: http
+        http_path: /healthz
+        healthy:
+          interval: 2
+          successes: 2
+        unhealthy:
+          interval: 1
+          http_failures: 2
+  - id: s2-maritime-intelligence
+    type: roundrobin
+    nodes:
+      "${S2_UPSTREAM_HOST}:${S2_UPSTREAM_PORT}": 1

@@ -1,0 +1,43 @@
+{
+  "realm": "blueeconomy",
+  "enabled": true,
+  "displayName": "Blue Economy Platform",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "failureFactor": 5,
+  "waitIncrementSeconds": 60,
+  "maxFailureWaitSeconds": 900,
+  "maxDeltaTimeSeconds": 43200,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 900,
+  "ssoSessionMaxLifespan": 28800,
+  "roles": {"realm": [{"name":"platform-admin"},{"name":"s1-operator"},{"name":"s2-analyst"},{"name":"s3-finance-approver"},{"name":"s4-verifier"},{"name":"tenant-admin"},{"name":"audit-reader"}]},
+  "clients": [{
+    "clientId": "platform-apisix",
+    "enabled": true,
+    "protocol": "openid-connect",
+    "publicClient": false,
+    "standardFlowEnabled": false,
+    "serviceAccountsEnabled": true,
+    "directAccessGrantsEnabled": false,
+    "secret": "${KEYCLOAK_APISIX_CLIENT_SECRET_AT_DEPLOYMENT}",
+    "redirectUris": [],
+    "webOrigins": [],
+    "attributes": {"oauth2.device.authorization.grant.enabled":"false","use.refresh.tokens":"false"}
+  },{
+    "clientId": "platform-portal",
+    "enabled": true,
+    "protocol": "openid-connect",
+    "publicClient": true,
+    "standardFlowEnabled": true,
+    "directAccessGrantsEnabled": false,
+    "redirectUris": ["${PLATFORM_PORTAL_REDIRECT_URI}"],
+    "webOrigins": ["${PLATFORM_PORTAL_ORIGIN}"],
+    "attributes": {"pkce.code.challenge.method":"S256","acr.loa.map":"{\"1\":\"mfa\"}"}
+  }],
+  "authenticationFlows": [{"alias":"platform-browser-mfa","description":"Password plus required MFA","providerId":"basic-flow","topLevel":true,"builtIn":false,"authenticationExecutions":[{"authenticator":"auth-cookie","requirement":"ALTERNATIVE","priority":10},{"authenticator":"auth-username-password-form","requirement":"REQUIRED","priority":20},{"authenticator":"auth-otp-form","requirement":"REQUIRED","priority":30}]}],
+  "browserFlow": "platform-browser-mfa"
+}
