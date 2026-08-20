@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apisix
+spec:
+  template:
+    metadata:
+      annotations:
+        security.blueeconomy.ng/production-approved-image-digests: required
+    spec:
+      securityContext:
+        seccompProfile: {type: RuntimeDefault}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opa
+spec:
+  template:
+    spec:
+      securityContext:
+        seccompProfile: {type: RuntimeDefault}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy-edge
+spec:
+  template:
+    spec:
+      securityContext:
+        seccompProfile: {type: RuntimeDefault}
