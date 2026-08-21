@@ -1,0 +1,90 @@
+# Authorised Target Verification Harness
+
+This directory contains **fail-closed orchestration scripts** for target-side S2 maritime-feed and S3 regulated-payment negative/resilience tests. They are not local mocks, partner simulators, or payment gateways. They contain no target endpoint, credential, signing key, raw test data, tenant, participant, cluster, or fault-command default.
+
+> Execute only in an approved Ministry-controlled non-production environment with a named change authorisation, approved and digest-bound runbook, authorised partner, defined test data, designated stop authority, approved encrypted evidence store, and KMS/HSM-backed integrity-verification service.
+
+## Scripts
+
+| Script | Purpose | Does it contact a target by itself? |
+|---|---|---|
+| `run-maritime-feed-target-tests.sh` | Runs 23 owner-approved maritime-feed negative, resilience, rollback, restore, replay, identity, and observability cases through a supplied authorised runner. | No. |
+| `run-regulated-payment-target-tests.sh` | Runs 13 owner-approved payment identity, instruction, provider, ledger, reconciliation, quorum, restore, and audit cases through a supplied authorised runner. | No. |
+| `validate-maritime-feed-dr-evidence.sh` | Verifies structural consistency, secure local modes, runbook/artifact binding, and integrity-attestation metadata for a completed maritime DR bundle. | No. |
+| `lib/target_test_common.sh` | Shared authorisation, path, mode, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
+
+## Dry-run validation
+
+The dry-run paths enumerate required case names without reading credentials, contacting an endpoint, injecting a fault, performing integrity signing, or mutating a target.
+
+```bash
+./run-maritime-feed-target-tests.sh --dry-run
+./run-regulated-payment-target-tests.sh --dry-run
+```
+
+## Execution gate
+
+Target execution requires an approved case runner **and** an approved integrity verifier. Both must be Ministry/partner-owned executable regular files delivered through an approved administration path. The case runner obtains target configuration and short-lived credentials only through approved workload identity and secret-management controls. The integrity verifier binds the completed evidence manifest to an organisation-managed KMS/HSM signing workflow.
+
+| Maritime variable | Payment equivalent | Requirement |
+|---|---|---|
+| `MARITIME_TARGET_TEST_ENABLED=true` | `PAYMENT_TARGET_TEST_ENABLED=true` | Explicitly enables execution. |
+| `MARITIME_TARGET_AUTHORIZATION_REF` | `PAYMENT_TARGET_AUTHORIZATION_REF` | Approved change/fault authorisation reference. |
+| `MARITIME_TARGET_ENVIRONMENT` | `PAYMENT_TARGET_ENVIRONMENT` | Named Ministry-controlled non-production target. |
+| `MARITIME_TARGET_RUNBOOK_REF` | `PAYMENT_TARGET_RUNBOOK_REF` | Approved operational/rollback/DR runbook reference. |
+| `MARITIME_TARGET_RUNBOOK_SHA256` | `PAYMENT_TARGET_RUNBOOK_SHA256` | Exact 64-character SHA-256 digest of the approved runbook bytes. |
+| `MARITIME_TARGET_CASE_RUNNER` | `PAYMENT_TARGET_CASE_RUNNER` | Absolute, non-symlinked, executable regular file that is not group/world writable. |
+| `MARITIME_TARGET_ARTIFACT_ROOT` | `PAYMENT_TARGET_ARTIFACT_ROOT` | Absolute, canonicalised, non-symlinked approved evidence root that is not world writable. |
+| `MARITIME_TARGET_ARTIFACT_ROOT_ID` | `PAYMENT_TARGET_ARTIFACT_ROOT_ID` | Approved storage/classification/retention reference recorded in the execution manifest. |
+| `MARITIME_TARGET_INTEGRITY_VERIFIER` | `PAYMENT_TARGET_INTEGRITY_VERIFIER` | Absolute, non-symlinked approved KMS/HSM integrity verifier. |
+
+The wrapper rejects absent authorisation, invalid references, missing/invalid runbook digest, insecure artifact root, relative or writable runner paths, non-passing result evidence, and result fields named like secrets, tokens, or private keys. It creates directories with `0750` and result/log/manifest files with `0640`; these modes supplement—not replace—encrypted storage and workload-identity policy.
+
+## Case-runner contract
+
+The supplied case runner is called as follows:
+
+```text
+<approved-case-runner> <case-name> <run-id>
+```
+
+It receives these environment variables:
+
+| Variable | Meaning |
+|---|---|
+| `TARGET_TEST_SUITE` | `maritime-feed-target` or `regulated-payment-target`. |
+| `TARGET_TEST_CASE` | The individual scenario name. |
+| `TARGET_TEST_CASE_DIR` | Approved per-case redacted artifact directory. |
+| `TARGET_TEST_RUN_ID` | UTC-derived run identifier. |
+
+The runner must write `$TARGET_TEST_CASE_DIR/result.json` in this form after a **passing** test. It must not write a credential, raw payment record, restricted intelligence, private key, bearer token, or raw partner payload to the result, stdout, stderr, or the evidence directory.
+
+```json
+{
+  "schema_version": "blueeconomy.target-test-result.v1",
+  "suite": "maritime-feed-target",
+  "case": "feed_outage_recovery",
+  "target_environment": "ministry-s2-nonprod",
+  "status": "passed",
+  "executed_at": "2026-08-20T12:00:00Z",
+  "expected_safe_outcome": "Approved retry and reconciliation completed without duplicate logical effects.",
+  "observed_outcome": "Broker recovery reconciled one source identity to one logical downstream effect.",
+  "evidence_references": ["change:CHG-EXAMPLE", "runbook:S2-DR-EXAMPLE", "evidence:secure-reference"]
+}
+```
+
+## Integrity-verifier contract
+
+After all cases have passed, the wrapper writes a canonical `evidence-manifest.json` containing the run identity, approved runbook digest, artifact-root identity, and SHA-256/byte-size record for each non-integrity artifact. It then invokes:
+
+```text
+<approved-integrity-verifier> <artifact-directory> <run-id>
+```
+
+The verifier receives `TARGET_TEST_EVIDENCE_MANIFEST`, `TARGET_TEST_INTEGRITY_ATTESTATION`, `TARGET_TEST_SUITE`, `TARGET_TEST_TARGET_ENVIRONMENT`, `TARGET_TEST_RUN_ID`, `TARGET_TEST_RUNBOOK_SHA256`, and `TARGET_TEST_ARTIFACT_ROOT_ID`. It must create `integrity-attestation.json` using schema `blueeconomy.evidence-integrity.v1`, bind the exact SHA-256 of the manifest, and provide a trusted signature reference and signer key identifier. The wrapper validates the binding but does not itself hold a private key or substitute for the Ministry’s KMS/HSM verification service.
+
+A runner that receives a scenario it does not support must fail before action. It must not replace a target case with a mock, synthetic partner, placeholder endpoint, or locally generated assertion.
+
+## Maritime rollback and DR procedure
+
+See [maritime-feed-rollback-and-disaster-recovery-validation.md](maritime-feed-rollback-and-disaster-recovery-validation.md). The procedure covers deployment rollback, Kubernetes failure-domain recovery, PostgreSQL PITR, outbox/Kafka replay reconciliation, Delta reprocessing/lineage, object-store recovery, OIDC/source-key revocation, observability retention, final evidence validation, and owner acceptance.

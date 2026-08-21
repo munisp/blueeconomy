@@ -1,0 +1,6 @@
+# Target-run evidence and operator configuration are maintained in approved external systems.
+results/*
+!results/.gitkeep
+*.local.env
+*.target.env
+operator-config/
