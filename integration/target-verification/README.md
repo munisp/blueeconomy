@@ -15,6 +15,8 @@ This directory contains **fail-closed orchestration scripts** for target-side S2
 | `validate-target-evidence-bundle.sh` | Verifies an authorised S2 or S3 evidence bundle offline, including v3 manifest/summary bindings and retained file hashes. It does not cryptographically verify a KMS/HSM signature itself. | No. |
 | `validate-protected-promotion-closeout-attestation.sh` | Validates a template, pending candidate or asserted approved promotion-closeout attestation offline, including candidate digest binding and evidence grouping. It never verifies a Ministry signature, contacts a target or establishes approval. | No. |
 | `schemas/blueeconomy.protected-promotion-closeout.v1.schema.json` | Repository-owned structural JSON Schema baseline for closeout attestations. Ministry policy, signer authorization and signature trust remain externally governed. | No. |
+| `reconcile_gitops_deployment_identity.py` | Compares a closeout candidate with a local, Ministry-controlled GitOps deployment-identity export. It blocks immutable commit/digest or reconciler-identity drift without any network or cluster access. | No. |
+| `schemas/blueeconomy.gitops-deployment-identity.v1.schema.json` | Structural schema baseline for the controlled deployment-identity export consumed by the reconciliation checker. | No. |
 | `lib/target_test_common.sh` | Shared authorisation, path, mode, immutable runner/verifier digest, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
 
 ## Dry-run validation
@@ -111,6 +113,19 @@ The repository supplies a structural baseline schema and an offline validator fo
 ```
 
 The final audit gate must use the Ministry-approved verification service and trusted signer policy to establish cryptographic authenticity, signature validity, signer authorization, revocation/expiry state and evidence-record accessibility before accepting any asserted `approved` payload.
+
+## Offline GitOps deployment-identity reconciliation
+
+The Python checker consumes an absolute local closeout-attestation file and an absolute, controlled deployment-identity export. It compares the source commit, environment overlay commit, rendered manifest SHA-256, ExternalSecret manifest SHA-256, image/chart digest-set SHA-256, and GitOps reconciler reference. A mismatch emits `immutable-candidate-drift` and exits with status `1`; a match reports `immutable-candidate-match`. Both outcomes expressly report no target contact, no target mutation, no cryptographic signature verification and no Ministry approval establishment.
+
+```bash
+python3 ./reconcile_gitops_deployment_identity.py \
+  --attestation /absolute/path/to/candidate.json \
+  --deployment-evidence /absolute/path/to/ministry-controlled-export.json \
+  --attestation-mode candidate
+```
+
+The export must be collected by the Ministry-approved GitOps evidence adapter. This repository checker never queries a cluster or reconciler itself and cannot establish live deployment identity.
 
 ## Maritime rollback and DR procedure
 

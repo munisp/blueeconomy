@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://blueeconomy.example/schemas/blueeconomy.gitops-deployment-identity.v1.schema.json",
+  "title": "Blue Economy GitOps Deployment Identity Export",
+  "description": "Repository-owned structural baseline for a Ministry-controlled offline export. It does not establish live deployment state or signature trust.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "export_kind", "observed_at", "gitops", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "blueeconomy.gitops-deployment-identity.v1"},
+    "export_kind": {"const": "ministry_controlled_offline_export"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "gitops": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reconciler_reference", "reconciled_overlay_commit_sha", "reconciliation_status", "direct_apply_detected"],
+      "properties": {
+        "reconciler_reference": {"$ref": "#/$defs/reference"},
+        "reconciled_overlay_commit_sha": {"$ref": "#/$defs/git_sha"},
+        "reconciliation_status": {"const": "synced"},
+        "direct_apply_detected": {"const": false}
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_commit_sha", "rendered_manifest_sha256", "external_secret_manifest_sha256", "image_and_chart_digest_set_sha256"],
+      "properties": {
+        "source_commit_sha": {"$ref": "#/$defs/git_sha"},
+        "rendered_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "external_secret_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "image_and_chart_digest_set_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  },
+  "$defs": {
+    "reference": {"type": "string", "pattern": "^[A-Za-z0-9._:/@+=-]{3,512}$"},
+    "git_sha": {"type": "string", "pattern": "^[a-fA-F0-9]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+  }
+}

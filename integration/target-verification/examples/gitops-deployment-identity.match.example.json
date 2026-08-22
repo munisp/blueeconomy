@@ -1,0 +1,17 @@
+{
+  "schema_version": "blueeconomy.gitops-deployment-identity.v1",
+  "export_kind": "ministry_controlled_offline_export",
+  "observed_at": "2026-08-22T12:30:00Z",
+  "gitops": {
+    "reconciler_reference": "gitops:example-reconciler",
+    "reconciled_overlay_commit_sha": "2222222222222222222222222222222222222222",
+    "reconciliation_status": "synced",
+    "direct_apply_detected": false
+  },
+  "artifacts": {
+    "source_commit_sha": "1111111111111111111111111111111111111111",
+    "rendered_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "external_secret_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "image_and_chart_digest_set_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  }
+}

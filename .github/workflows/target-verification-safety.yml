@@ -46,6 +46,8 @@ jobs:
           set -euo pipefail
           jq -e '(."$schema" | type == "string") and .properties.schema_version.const == "blueeconomy.protected-promotion-closeout.v1"' \
             integration/target-verification/schemas/blueeconomy.protected-promotion-closeout.v1.schema.json
+          jq -e '(."$schema" | type == "string") and .properties.schema_version.const == "blueeconomy.gitops-deployment-identity.v1"' \
+            integration/target-verification/schemas/blueeconomy.gitops-deployment-identity.v1.schema.json
           root="$PWD"
           "$root/integration/target-verification/validate-protected-promotion-closeout-attestation.sh" \
             --attestation "$root/integration/target-verification/examples/protected-promotion-closeout.template.json" \
@@ -56,6 +58,10 @@ jobs:
           jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-template-validation.json
           jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-candidate-validation.json
           integration/target-verification/test-protected-promotion-closeout-attestation.sh
+          python3 -m py_compile \
+            integration/target-verification/reconcile_gitops_deployment_identity.py \
+            integration/target-verification/test_reconcile_gitops_deployment_identity.py
+          python3 integration/target-verification/test_reconcile_gitops_deployment_identity.py
 
       - name: Enumerate approved cases without execution
         run: |
