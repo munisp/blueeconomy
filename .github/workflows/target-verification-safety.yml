@@ -36,7 +36,8 @@ jobs:
             integration/target-verification/validate-target-acceptance-readiness.sh \
             integration/target-verification/validate-target-evidence-bundle.sh \
             integration/target-verification/validate-maritime-feed-dr-evidence.sh \
-            integration/target-verification/validate-protected-promotion-closeout-attestation.sh; do
+            integration/target-verification/validate-protected-promotion-closeout-attestation.sh \
+            integration/target-verification/test-protected-promotion-closeout-attestation.sh; do
             bash -n "$script"
           done
 
@@ -54,6 +55,7 @@ jobs:
             --mode candidate > closeout-candidate-validation.json
           jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-template-validation.json
           jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-candidate-validation.json
+          integration/target-verification/test-protected-promotion-closeout-attestation.sh
 
       - name: Enumerate approved cases without execution
         run: |

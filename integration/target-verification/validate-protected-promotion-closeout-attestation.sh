@@ -113,7 +113,7 @@ done
 jq -e 'type == "object"' "$attestation" >/dev/null || usage_error 'attestation must be a JSON object'
 
 # Reject content markers that should never be retained in a closeout attestation.
-if grep -I -n -E -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|[Aa]uthorization:[[:space:]]*[Bb]earer[[:space:]]|(^|[^[:alnum:]_])(access_token|refresh_token|client_secret|password)[[:space:]]*[:=]' \
+if grep -I -n -E -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|[Aa]uthorization:[[:space:]]*[Bb]earer[[:space:]]|(^|[^[:alnum:]_])(access_token|refresh_token|client_secret|password)"?[[:space:]]*[:=]' \
   "$attestation" >/dev/null; then
   usage_error 'attestation contains a prohibited sensitive-content marker'
 fi
