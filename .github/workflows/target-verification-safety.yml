@@ -37,7 +37,8 @@ jobs:
             integration/target-verification/validate-target-evidence-bundle.sh \
             integration/target-verification/validate-maritime-feed-dr-evidence.sh \
             integration/target-verification/validate-protected-promotion-closeout-attestation.sh \
-            integration/target-verification/test-protected-promotion-closeout-attestation.sh; do
+            integration/target-verification/test-protected-promotion-closeout-attestation.sh \
+            integration/target-verification/run_gitops_reconciliation_pre_pr.sh; do
             bash -n "$script"
           done
 

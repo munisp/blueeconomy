@@ -16,6 +16,7 @@ This directory contains **fail-closed orchestration scripts** for target-side S2
 | `validate-protected-promotion-closeout-attestation.sh` | Validates a template, pending candidate or asserted approved promotion-closeout attestation offline, including candidate digest binding and evidence grouping. It never verifies a Ministry signature, contacts a target or establishes approval. | No. |
 | `schemas/blueeconomy.protected-promotion-closeout.v1.schema.json` | Repository-owned structural JSON Schema baseline for closeout attestations. Ministry policy, signer authorization and signature trust remain externally governed. | No. |
 | `reconcile_gitops_deployment_identity.py` | Compares a closeout candidate with a local, Ministry-controlled GitOps deployment-identity export. It blocks immutable commit/digest or reconciler-identity drift without any network or cluster access. | No. |
+| `run_gitops_reconciliation_pre_pr.sh` | Local wrapper for syntax, self-test, reconciliation result retention and exit-code enforcement before a pull request. It accepts only local absolute evidence paths. | No. |
 | `schemas/blueeconomy.gitops-deployment-identity.v1.schema.json` | Structural schema baseline for the controlled deployment-identity export consumed by the reconciliation checker. | No. |
 | `lib/target_test_common.sh` | Shared authorisation, path, mode, immutable runner/verifier digest, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
 
@@ -126,6 +127,17 @@ python3 ./reconcile_gitops_deployment_identity.py \
 ```
 
 The export must be collected by the Ministry-approved GitOps evidence adapter. This repository checker never queries a cluster or reconciler itself and cannot establish live deployment identity.
+
+For local pre-pull-request validation, use the wrapper to run its fixture self-test, then compare the approved local candidate/export files. The output directory retains non-secret result, error, invocation and hash records. Exit `0` is a local immutable-candidate match, while exit `1` is a drift block—not Ministry approval.
+
+```bash
+./run_gitops_reconciliation_pre_pr.sh --self-test
+./run_gitops_reconciliation_pre_pr.sh \
+  --attestation /absolute/path/to/candidate.json \
+  --deployment-evidence /absolute/path/to/ministry-controlled-export.json \
+  --mode candidate \
+  --output-dir /absolute/path/to/local-evidence
+```
 
 ## Maritime rollback and DR procedure
 
