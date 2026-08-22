@@ -1,0 +1,48 @@
+groups:
+  - name: blueeconomy-gitops-candidate-binding
+    interval: 30s
+    rules:
+      - alert: BlueEconomyImmutableCandidateDrift
+        expr: increase(blueeconomy_gitops_candidate_reconciliation_total{result="drift"}[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: gitops-candidate-binding
+          action: block-promotion
+        annotations:
+          summary: "Immutable GitOps candidate binding drift detected"
+          description: "A bounded candidate identity field drifted; pull request and promotion must remain blocked until the candidate is regenerated and reviewed."
+          runbook: "integration/target-verification/README.md#pre-pull-request-drift-telemetry"
+
+      - alert: BlueEconomyCandidateBindingBlockActive
+        expr: max(blueeconomy_gitops_candidate_binding_blocking{mode="candidate"}) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: gitops-candidate-binding
+          action: block-promotion
+        annotations:
+          summary: "GitOps candidate binding is blocking promotion"
+          description: "The local or imported pre-PR evidence reports an active immutable binding block."
+
+      - alert: BlueEconomyUnexpectedExternalContact
+        expr: increase(blueeconomy_gitops_candidate_external_contact_attempted[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: target-verification-safety
+          action: quarantine-run
+        annotations:
+          summary: "Unexpected external contact during offline candidate check"
+          description: "The pre-PR safety contract reports external contact; quarantine the run and investigate before any promotion."
+
+      - alert: BlueEconomyBindingMismatchFieldObserved
+        expr: increase(blueeconomy_gitops_candidate_binding_mismatch_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: gitops-candidate-binding
+          action: block-promotion
+        annotations:
+          summary: "Immutable candidate mismatch field observed"
+          description: "A bounded immutable candidate field mismatch was recorded. The field label is intentionally finite and non-secret."
