@@ -1,0 +1,10 @@
+{
+  "schema_version": "blueeconomy.offline-revocation-policy.v1",
+  "document_type": "offline_policy_example_or_approved_policy",
+  "policy_reference": "policy:EXAMPLE-AIRGAP-REVOCATION",
+  "rules": {
+    "air_gapped": true,
+    "direct_network_fetch_permitted": false,
+    "allow_cached_stapled_ocsp_fallback": true
+  }
+}

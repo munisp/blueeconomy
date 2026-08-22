@@ -16,7 +16,8 @@ This directory contains **fail-closed orchestration scripts** for target-side S2
 | `validate-protected-promotion-closeout-attestation.sh` | Validates a template, pending candidate or asserted approved promotion-closeout attestation offline, including candidate digest binding and evidence grouping. It never verifies a Ministry signature, contacts a target or establishes approval. | No. |
 | `schemas/blueeconomy.protected-promotion-closeout.v1.schema.json` | Repository-owned structural JSON Schema baseline for closeout attestations. Ministry policy, signer authorization and signature trust remain externally governed. | No. |
 | `reconcile_gitops_deployment_identity.py` | Compares a closeout candidate with a local, Ministry-controlled GitOps deployment-identity export. It blocks immutable commit/digest or reconciler-identity drift without any network or cluster access. | No. |
-| `run_gitops_reconciliation_pre_pr.sh` | Local wrapper for syntax, self-test, reconciliation result retention and exit-code enforcement before a pull request. It accepts only local absolute evidence paths. | No. |
+| `run_gitops_reconciliation_pre_pr.sh` | Local wrapper for syntax, self-test, reconciliation result retention, non-secret drift telemetry and exit-code enforcement before a pull request. It accepts only local absolute evidence paths. | No. |
+| `evaluate_offline_revocation_cache.py` | Selects a current cached CRL or, only when policy permits, a current pre-cached stapled-OCSP record for an air-gapped audit. It never fetches a PKI endpoint or claims cryptographic verification. | No. |
 | `schemas/blueeconomy.gitops-deployment-identity.v1.schema.json` | Structural schema baseline for the controlled deployment-identity export consumed by the reconciliation checker. | No. |
 | `lib/target_test_common.sh` | Shared authorisation, path, mode, immutable runner/verifier digest, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
 
@@ -138,6 +139,24 @@ For local pre-pull-request validation, use the wrapper to run its fixture self-t
   --mode candidate \
   --output-dir /absolute/path/to/local-evidence
 ```
+
+## Air-gapped offline revocation-cache selection
+
+`evaluate_offline_revocation_cache.py` is a local policy-selection control for a Ministry-controlled cache manifest. When a cached CRL is expired or not good, it can select a **previously captured** current stapled-OCSP entry only if the supplied offline policy permits that fallback. It never performs a network request, validates a CRL/OCSP signature, validates a trust path or establishes approval; the Ministry final-audit verifier must perform those operations against the approved trust/cache material.
+
+```bash
+python3 ./evaluate_offline_revocation_cache.py \
+  --policy /absolute/path/to/approved-offline-revocation-policy.json \
+  --cache-manifest /absolute/path/to/controlled-cache-manifest.json \
+  --certificate-reference <non-secret-reference> \
+  --verification-time <RFC3339-UTC>
+```
+
+A selected result is `*-requires-cryptographic-verification`; no current trusted cached record yields `revocation-status-blocked` and exit `1`. The utility never falls back to a live OCSP or CRL endpoint.
+
+## Pre-pull-request drift telemetry
+
+On a local immutable-candidate mismatch, `run_gitops_reconciliation_pre_pr.sh` exits `1`, writes a Prometheus text artifact and a structured critical alert JSON into its output directory, and prints a local blocking alert to stderr. It sends no notification and includes only finite field names—not candidate hashes, paths, credentials or endpoint values—in telemetry labels/alert fields. The local metrics are `blueeconomy_gitops_candidate_reconciliation_total`, `blueeconomy_gitops_candidate_binding_mismatch_total`, `blueeconomy_gitops_candidate_binding_blocking`, and `blueeconomy_gitops_candidate_external_contact_attempted`.
 
 ## Maritime rollback and DR procedure
 

@@ -1,0 +1,22 @@
+{
+  "schema_version": "blueeconomy.offline-revocation-cache.v1",
+  "export_kind": "controlled_offline_cache_manifest",
+  "manifest_signature_reference": "signature:EXAMPLE-CACHE-MANIFEST",
+  "entries": [
+    {
+      "certificate_reference": "cert:EXAMPLE-SIGNER-01",
+      "crl": {
+        "status": "good",
+        "this_update": "2026-08-22T08:00:00Z",
+        "next_update": "2026-08-22T10:00:00Z",
+        "produced_at": "2026-08-22T08:05:00Z"
+      },
+      "stapled_ocsp": {
+        "status": "good",
+        "this_update": "2026-08-22T08:30:00Z",
+        "next_update": "2026-08-22T10:30:00Z",
+        "produced_at": "2026-08-22T08:31:00Z"
+      }
+    }
+  ]
+}

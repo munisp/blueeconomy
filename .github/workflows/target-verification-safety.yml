@@ -38,7 +38,8 @@ jobs:
             integration/target-verification/validate-maritime-feed-dr-evidence.sh \
             integration/target-verification/validate-protected-promotion-closeout-attestation.sh \
             integration/target-verification/test-protected-promotion-closeout-attestation.sh \
-            integration/target-verification/run_gitops_reconciliation_pre_pr.sh; do
+            integration/target-verification/run_gitops_reconciliation_pre_pr.sh \
+            integration/target-verification/test_run_gitops_reconciliation_pre_pr.sh; do
             bash -n "$script"
           done
 
@@ -61,8 +62,12 @@ jobs:
           integration/target-verification/test-protected-promotion-closeout-attestation.sh
           python3 -m py_compile \
             integration/target-verification/reconcile_gitops_deployment_identity.py \
-            integration/target-verification/test_reconcile_gitops_deployment_identity.py
+            integration/target-verification/test_reconcile_gitops_deployment_identity.py \
+            integration/target-verification/evaluate_offline_revocation_cache.py \
+            integration/target-verification/test_evaluate_offline_revocation_cache.py
           python3 integration/target-verification/test_reconcile_gitops_deployment_identity.py
+          python3 integration/target-verification/test_evaluate_offline_revocation_cache.py
+          integration/target-verification/test_run_gitops_reconciliation_pre_pr.sh
 
       - name: Enumerate approved cases without execution
         run: |
