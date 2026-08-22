@@ -43,7 +43,21 @@ require_approved_runner() {
   require_text "$name"
   [[ "$runner" = /* ]] || usage_error "$name must be an absolute path"
   [[ -f "$runner" && -x "$runner" && ! -L "$runner" ]] || usage_error "$name must identify an executable regular file"
+  [[ "$(realpath -e -- "$runner")" == "$runner" ]] || usage_error "$name must be a canonical non-symlink path"
   assert_private_regular_file "$runner"
+}
+
+require_approved_runner_digest() {
+  local runner_name=$1
+  local digest_name=$2
+  local runner expected actual
+
+  require_approved_runner "$runner_name"
+  require_sha256 "$digest_name"
+  runner=${!runner_name}
+  expected=${!digest_name}
+  actual=$(sha256sum -- "$runner" | awk '{print $1}')
+  [[ "${actual,,}" == "${expected,,}" ]] || usage_error "$digest_name does not match the approved bytes at $runner_name"
 }
 
 assert_private_regular_file() {
@@ -92,10 +106,11 @@ require_integrity_inputs() {
   local runbook_digest_name=$1
   local artifact_root_id_name=$2
   local integrity_runner_name=$3
+  local integrity_runner_digest_name=$4
 
   require_sha256 "$runbook_digest_name"
   require_safe_reference "$artifact_root_id_name"
-  require_approved_runner "$integrity_runner_name"
+  require_approved_runner_digest "$integrity_runner_name" "$integrity_runner_digest_name"
 }
 
 create_artifact_directory() {
@@ -122,19 +137,23 @@ write_manifest() {
   local runbook_ref=$4
   local runbook_sha256=$5
   local artifact_root_id=$6
-  shift 6
+  local case_runner_sha256=$7
+  local integrity_verifier_sha256=$8
+  shift 8
 
   jq -n \
-    --arg schema_version 'blueeconomy.target-test-manifest.v2' \
+    --arg schema_version 'blueeconomy.target-test-manifest.v3' \
     --arg suite "$suite_name" \
     --arg target_environment "$target_environment" \
     --arg authorization_reference "$authorization_ref" \
     --arg runbook_reference "$runbook_ref" \
     --arg runbook_sha256 "$runbook_sha256" \
     --arg artifact_root_id "$artifact_root_id" \
+    --arg case_runner_sha256 "$case_runner_sha256" \
+    --arg integrity_verifier_sha256 "$integrity_verifier_sha256" \
     --arg run_id "$TARGET_TEST_RUN_ID" \
     --arg started_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-    '{schema_version:$schema_version,suite:$suite,target_environment:$target_environment,authorization_reference:$authorization_reference,runbook_reference:$runbook_reference,runbook_sha256:$runbook_sha256,artifact_root_id:$artifact_root_id,run_id:$run_id,started_at:$started_at,planned_cases:$ARGS.positional}' \
+    '{schema_version:$schema_version,suite:$suite,target_environment:$target_environment,authorization_reference:$authorization_reference,runbook_reference:$runbook_reference,runbook_sha256:$runbook_sha256,artifact_root_id:$artifact_root_id,case_runner_sha256:$case_runner_sha256,integrity_verifier_sha256:$integrity_verifier_sha256,run_id:$run_id,started_at:$started_at,planned_cases:$ARGS.positional}' \
     --args "$@" \
     > "$TARGET_TEST_ARTIFACT_DIR/manifest.json"
   chmod 0640 "$TARGET_TEST_ARTIFACT_DIR/manifest.json"

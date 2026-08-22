@@ -10,8 +10,10 @@ This directory contains **fail-closed orchestration scripts** for target-side S2
 |---|---|---|
 | `run-maritime-feed-target-tests.sh` | Runs 23 owner-approved maritime-feed negative, resilience, rollback, restore, replay, identity, and observability cases through a supplied authorised runner. | No. |
 | `run-regulated-payment-target-tests.sh` | Runs 13 owner-approved payment identity, instruction, provider, ledger, reconciliation, quorum, restore, and audit cases through a supplied authorised runner. | No. |
-| `validate-maritime-feed-dr-evidence.sh` | Verifies structural consistency, secure local modes, runbook/artifact binding, and integrity-attestation metadata for a completed maritime DR bundle. | No. |
-| `lib/target_test_common.sh` | Shared authorisation, path, mode, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
+| `validate-maritime-feed-dr-evidence.sh` | Verifies structural consistency, secure local modes, runbook/artifact binding, runner-digest binding, and integrity-attestation metadata for a completed maritime DR bundle. | No. |
+| `validate-target-acceptance-readiness.sh` | Reports whether required control names, non-secret references, runner/verifier paths and approved digests are ready. It never enables execution or contacts a target. | No. |
+| `validate-target-evidence-bundle.sh` | Verifies an authorised S2 or S3 evidence bundle offline, including v3 manifest/summary bindings and retained file hashes. It does not cryptographically verify a KMS/HSM signature itself. | No. |
+| `lib/target_test_common.sh` | Shared authorisation, path, mode, immutable runner/verifier digest, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
 
 ## Dry-run validation
 
@@ -24,7 +26,7 @@ The dry-run paths enumerate required case names without reading credentials, con
 
 ## Execution gate
 
-Target execution requires an approved case runner **and** an approved integrity verifier. Both must be Ministry/partner-owned executable regular files delivered through an approved administration path. The case runner obtains target configuration and short-lived credentials only through approved workload identity and secret-management controls. The integrity verifier binds the completed evidence manifest to an organisation-managed KMS/HSM signing workflow.
+Target execution requires an approved case runner **and** an approved integrity verifier. Both must be Ministry/partner-owned executable regular files delivered through an approved administration path and pinned by separately approved SHA-256 digests. The case runner obtains target configuration and short-lived credentials only through approved workload identity and secret-management controls. The integrity verifier binds the completed evidence manifest to an organisation-managed KMS/HSM signing workflow.
 
 | Maritime variable | Payment equivalent | Requirement |
 |---|---|---|
@@ -33,10 +35,12 @@ Target execution requires an approved case runner **and** an approved integrity 
 | `MARITIME_TARGET_ENVIRONMENT` | `PAYMENT_TARGET_ENVIRONMENT` | Named Ministry-controlled non-production target. |
 | `MARITIME_TARGET_RUNBOOK_REF` | `PAYMENT_TARGET_RUNBOOK_REF` | Approved operational/rollback/DR runbook reference. |
 | `MARITIME_TARGET_RUNBOOK_SHA256` | `PAYMENT_TARGET_RUNBOOK_SHA256` | Exact 64-character SHA-256 digest of the approved runbook bytes. |
-| `MARITIME_TARGET_CASE_RUNNER` | `PAYMENT_TARGET_CASE_RUNNER` | Absolute, non-symlinked, executable regular file that is not group/world writable. |
+| `MARITIME_TARGET_CASE_RUNNER` | `PAYMENT_TARGET_CASE_RUNNER` | Absolute, canonicalised, non-symlinked, executable regular file that is not group/world writable. |
+| `MARITIME_TARGET_CASE_RUNNER_SHA256` | `PAYMENT_TARGET_CASE_RUNNER_SHA256` | Exact 64-character SHA-256 digest of the approved case-runner bytes; checked before any target case runs and recorded in manifest/summary v3. |
 | `MARITIME_TARGET_ARTIFACT_ROOT` | `PAYMENT_TARGET_ARTIFACT_ROOT` | Absolute, canonicalised, non-symlinked approved evidence root that is not world writable. |
 | `MARITIME_TARGET_ARTIFACT_ROOT_ID` | `PAYMENT_TARGET_ARTIFACT_ROOT_ID` | Approved storage/classification/retention reference recorded in the execution manifest. |
-| `MARITIME_TARGET_INTEGRITY_VERIFIER` | `PAYMENT_TARGET_INTEGRITY_VERIFIER` | Absolute, non-symlinked approved KMS/HSM integrity verifier. |
+| `MARITIME_TARGET_INTEGRITY_VERIFIER` | `PAYMENT_TARGET_INTEGRITY_VERIFIER` | Absolute, canonicalised, non-symlinked approved KMS/HSM integrity verifier. |
+| `MARITIME_TARGET_INTEGRITY_VERIFIER_SHA256` | `PAYMENT_TARGET_INTEGRITY_VERIFIER_SHA256` | Exact 64-character SHA-256 digest of the approved integrity-verifier bytes; checked before evidence creation. |
 
 The wrapper rejects absent authorisation, invalid references, missing/invalid runbook digest, insecure artifact root, relative or writable runner paths, non-passing result evidence, and result fields named like secrets, tokens, or private keys. It creates directories with `0750` and result/log/manifest files with `0640`; these modes supplement—not replace—encrypted storage and workload-identity policy.
 
@@ -75,7 +79,7 @@ The runner must write `$TARGET_TEST_CASE_DIR/result.json` in this form after a *
 
 ## Integrity-verifier contract
 
-After all cases have passed, the wrapper writes a canonical `evidence-manifest.json` containing the run identity, approved runbook digest, artifact-root identity, and SHA-256/byte-size record for each non-integrity artifact. It then invokes:
+After all cases have passed, the wrapper writes a canonical `evidence-manifest.json` containing the run identity, approved runbook digest, artifact-root identity, approved case-runner and integrity-verifier digests, and SHA-256/byte-size record for each non-integrity artifact. It then invokes:
 
 ```text
 <approved-integrity-verifier> <artifact-directory> <run-id>

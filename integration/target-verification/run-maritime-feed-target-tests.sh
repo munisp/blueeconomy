@@ -48,9 +48,11 @@ Execution requires all of the following environment variables:
   MARITIME_TARGET_RUNBOOK_REF=<approved-runbook-reference>
   MARITIME_TARGET_RUNBOOK_SHA256=<64-character-approved-runbook-digest>
   MARITIME_TARGET_CASE_RUNNER=/absolute/path/to/approved-case-runner
+  MARITIME_TARGET_CASE_RUNNER_SHA256=<64-character-approved-case-runner-digest>
   MARITIME_TARGET_ARTIFACT_ROOT=/absolute/path/to/approved-artifact-directory
   MARITIME_TARGET_ARTIFACT_ROOT_ID=<approved-evidence-store-reference>
   MARITIME_TARGET_INTEGRITY_VERIFIER=/absolute/path/to/approved-KMS-HSM-integrity-verifier
+  MARITIME_TARGET_INTEGRITY_VERIFIER_SHA256=<64-character-approved-integrity-verifier-digest>
 
 The approved case runner receives: <case-name> <run-id>.
 It must create $TARGET_TEST_CASE_DIR/result.json using schema
@@ -84,12 +86,15 @@ require_execute_authorization \
   MARITIME_TARGET_AUTHORIZATION_REF \
   MARITIME_TARGET_ENVIRONMENT \
   MARITIME_TARGET_RUNBOOK_REF
-require_approved_runner MARITIME_TARGET_CASE_RUNNER
+require_approved_runner_digest \
+  MARITIME_TARGET_CASE_RUNNER \
+  MARITIME_TARGET_CASE_RUNNER_SHA256
 require_secure_artifact_root MARITIME_TARGET_ARTIFACT_ROOT
 require_integrity_inputs \
   MARITIME_TARGET_RUNBOOK_SHA256 \
   MARITIME_TARGET_ARTIFACT_ROOT_ID \
-  MARITIME_TARGET_INTEGRITY_VERIFIER
+  MARITIME_TARGET_INTEGRITY_VERIFIER \
+  MARITIME_TARGET_INTEGRITY_VERIFIER_SHA256
 
 create_artifact_directory \
   "$MARITIME_TARGET_ARTIFACT_ROOT" \
@@ -102,6 +107,8 @@ write_manifest \
   "$MARITIME_TARGET_RUNBOOK_REF" \
   "$MARITIME_TARGET_RUNBOOK_SHA256" \
   "$MARITIME_TARGET_ARTIFACT_ROOT_ID" \
+  "$MARITIME_TARGET_CASE_RUNNER_SHA256" \
+  "$MARITIME_TARGET_INTEGRITY_VERIFIER_SHA256" \
   "${cases[@]}"
 
 for test_case in "${cases[@]}"; do
@@ -113,15 +120,17 @@ for test_case in "${cases[@]}"; do
 done
 
 jq -n \
-  --arg schema_version 'blueeconomy.target-test-summary.v2' \
+  --arg schema_version 'blueeconomy.target-test-summary.v3' \
   --arg suite "$suite" \
   --arg target_environment "$MARITIME_TARGET_ENVIRONMENT" \
   --arg authorization_reference "$MARITIME_TARGET_AUTHORIZATION_REF" \
   --arg runbook_sha256 "$MARITIME_TARGET_RUNBOOK_SHA256" \
   --arg artifact_root_id "$MARITIME_TARGET_ARTIFACT_ROOT_ID" \
+  --arg case_runner_sha256 "$MARITIME_TARGET_CASE_RUNNER_SHA256" \
+  --arg integrity_verifier_sha256 "$MARITIME_TARGET_INTEGRITY_VERIFIER_SHA256" \
   --arg run_id "$TARGET_TEST_RUN_ID" \
   --arg completed_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  '{schema_version:$schema_version,suite:$suite,target_environment:$target_environment,authorization_reference:$authorization_reference,runbook_sha256:$runbook_sha256,artifact_root_id:$artifact_root_id,run_id:$run_id,completed_at:$completed_at,status:"passed",completed_cases:$ARGS.positional}' \
+  '{schema_version:$schema_version,suite:$suite,target_environment:$target_environment,authorization_reference:$authorization_reference,runbook_sha256:$runbook_sha256,artifact_root_id:$artifact_root_id,case_runner_sha256:$case_runner_sha256,integrity_verifier_sha256:$integrity_verifier_sha256,run_id:$run_id,completed_at:$completed_at,status:"passed",completed_cases:$ARGS.positional}' \
   --args "${cases[@]}" \
   > "$TARGET_TEST_ARTIFACT_DIR/summary.json"
 chmod 0640 "$TARGET_TEST_ARTIFACT_DIR/summary.json"

@@ -1,0 +1,51 @@
+name: Target Verification Safety
+
+on:
+  pull_request:
+    paths:
+      - 'integration/target-verification/**'
+      - '.github/workflows/target-verification-safety.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'integration/target-verification/**'
+      - '.github/workflows/target-verification-safety.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: target-verification-safety-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  safety:
+    name: Verify target-test controls without target access
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate shell syntax
+        run: |
+          for script in integration/target-verification/lib/target_test_common.sh \
+            integration/target-verification/run-maritime-feed-target-tests.sh \
+            integration/target-verification/run-regulated-payment-target-tests.sh \
+            integration/target-verification/validate-target-acceptance-readiness.sh \
+            integration/target-verification/validate-target-evidence-bundle.sh \
+            integration/target-verification/validate-maritime-feed-dr-evidence.sh; do
+            bash -n "$script"
+          done
+
+      - name: Enumerate approved cases without execution
+        run: |
+          integration/target-verification/run-maritime-feed-target-tests.sh --dry-run
+          integration/target-verification/run-regulated-payment-target-tests.sh --dry-run
+
+      - name: Publish redacted readiness report
+        run: |
+          integration/target-verification/validate-target-acceptance-readiness.sh --format json > target-acceptance-readiness.json
+          jq -e '.target_contacted == false and .target_mutated == false and .secret_values_read == false' target-acceptance-readiness.json
+          cat target-acceptance-readiness.json
