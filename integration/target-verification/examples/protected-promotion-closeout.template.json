@@ -1,0 +1,84 @@
+{
+  "schema_version": "blueeconomy.protected-promotion-closeout.v1",
+  "document_type": "template_only",
+  "status": "template_not_signed_not_approved",
+  "attestation_id": "TEMPLATE-ONLY-REPLACE-WITH-MINISTRY-ID",
+  "issued_at": "YYYY-MM-DDThh:mm:ssZ",
+  "expires_at": "YYYY-MM-DDThh:mm:ssZ",
+  "scope": {
+    "environment_reference": "<MINISTRY_APPROVED_PRODUCTION_ENVIRONMENT_REFERENCE>",
+    "namespace_reference": "<APPROVED_NAMESPACE_REFERENCE>",
+    "change_authorization_reference": "<APPROVED_CHANGE_OR_FAULT_REFERENCE>",
+    "promotion_mode": "gitops_only"
+  },
+  "candidate": {
+    "source_commit_sha": "<40_HEX_GIT_COMMIT_SHA>",
+    "environment_overlay_commit_sha": "<40_HEX_GIT_COMMIT_SHA>",
+    "rendered_manifest_sha256": "<64_HEX_SHA256>",
+    "external_secret_manifest_sha256": "<64_HEX_SHA256>",
+    "image_and_chart_digest_set_sha256": "<64_HEX_SHA256>"
+  },
+  "required_evidence": [
+    {
+      "control": "P1-P4",
+      "kind": "secret_store_and_identity_attestation",
+      "reference": "<CONTROLLED_EVIDENCE_REFERENCE>",
+      "sha256": "<64_HEX_SHA256>",
+      "status": "required"
+    },
+    {
+      "control": "P5-P7",
+      "kind": "cluster_encryption_rbac_admission_attestation",
+      "reference": "<CONTROLLED_EVIDENCE_REFERENCE>",
+      "sha256": "<64_HEX_SHA256>",
+      "status": "required"
+    },
+    {
+      "control": "P8-P12",
+      "kind": "gitops_lifecycle_runtime_and_secret_scan_evidence",
+      "reference": "<CONTROLLED_EVIDENCE_REFERENCE>",
+      "sha256": "<64_HEX_SHA256>",
+      "status": "required"
+    },
+    {
+      "control": "P13-P18",
+      "kind": "observability_rotation_recovery_governance_and_independent_review",
+      "reference": "<CONTROLLED_EVIDENCE_REFERENCE>",
+      "sha256": "<64_HEX_SHA256>",
+      "status": "required"
+    }
+  ],
+  "automated_checks": [
+    {
+      "name": "external-secrets-and-overlay-validation",
+      "run_reference": "<CI_RUN_REFERENCE>",
+      "source_commit_sha": "<40_HEX_GIT_COMMIT_SHA>",
+      "status": "passed"
+    },
+    {
+      "name": "gitops-manifest-validation",
+      "run_reference": "<CI_RUN_REFERENCE>",
+      "source_commit_sha": "<40_HEX_GIT_COMMIT_SHA>",
+      "status": "passed"
+    }
+  ],
+  "review": {
+    "independent_reviewer_role": "<MINISTRY_INDEPENDENT_SECURITY_OR_COMPLIANCE_ROLE>",
+    "review_outcome": "pending_authorized_signature",
+    "findings_reference": "<CONTROLLED_REVIEW_REFERENCE_OR_NONE>",
+    "exception_reference": "<APPROVED_TIME_BOUNDED_EXCEPTION_OR_NONE>"
+  },
+  "promotion_decision": {
+    "decision": "not_approved_template_only",
+    "gitops_reconciler_reference": "<APPROVED_GITOPS_RECONCILER_ID>",
+    "rollback_reference": "<APPROVED_ROLLBACK_OR_RECOVERY_REFERENCE>",
+    "post_promotion_verification_reference": "<REQUIRED_AFTER_RECONCILIATION>"
+  },
+  "signature": {
+    "status": "placeholder_not_a_signature",
+    "algorithm": "<MINISTRY_APPROVED_SIGNATURE_ALGORITHM>",
+    "signer_key_id": "<MINISTRY_NON_SECRET_SIGNER_KEY_IDENTIFIER>",
+    "signature_reference": "<CONTROLLED_SIGNATURE_OBJECT_REFERENCE>",
+    "signature_value": "NOT_A_VALID_SIGNATURE"
+  }
+}

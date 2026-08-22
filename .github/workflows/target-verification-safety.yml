@@ -35,9 +35,25 @@ jobs:
             integration/target-verification/run-regulated-payment-target-tests.sh \
             integration/target-verification/validate-target-acceptance-readiness.sh \
             integration/target-verification/validate-target-evidence-bundle.sh \
-            integration/target-verification/validate-maritime-feed-dr-evidence.sh; do
+            integration/target-verification/validate-maritime-feed-dr-evidence.sh \
+            integration/target-verification/validate-protected-promotion-closeout-attestation.sh; do
             bash -n "$script"
           done
+
+      - name: Validate closeout-attestation structural controls without approval
+        run: |
+          set -euo pipefail
+          jq -e '(."$schema" | type == "string") and .properties.schema_version.const == "blueeconomy.protected-promotion-closeout.v1"' \
+            integration/target-verification/schemas/blueeconomy.protected-promotion-closeout.v1.schema.json
+          root="$PWD"
+          "$root/integration/target-verification/validate-protected-promotion-closeout-attestation.sh" \
+            --attestation "$root/integration/target-verification/examples/protected-promotion-closeout.template.json" \
+            --mode template > closeout-template-validation.json
+          "$root/integration/target-verification/validate-protected-promotion-closeout-attestation.sh" \
+            --attestation "$root/integration/target-verification/examples/protected-promotion-closeout.pending-candidate.example.json" \
+            --mode candidate > closeout-candidate-validation.json
+          jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-template-validation.json
+          jq -e '.cryptographic_signature_verified == false and .ministry_approval_established == false' closeout-candidate-validation.json
 
       - name: Enumerate approved cases without execution
         run: |

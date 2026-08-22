@@ -1,0 +1,78 @@
+{
+  "schema_version": "blueeconomy.protected-promotion-closeout.v1",
+  "document_type": "ministry_controlled_attestation",
+  "status": "pending_authorized_signature",
+  "attestation_id": "PPROM-EXAMPLE-0001",
+  "issued_at": "2026-08-22T12:00:00Z",
+  "expires_at": "2026-08-23T12:00:00Z",
+  "scope": {
+    "environment_reference": "env:nonprod-example",
+    "namespace_reference": "ns:blueeconomy-example",
+    "change_authorization_reference": "change:EXAMPLE-0001",
+    "promotion_mode": "gitops_only"
+  },
+  "candidate": {
+    "source_commit_sha": "1111111111111111111111111111111111111111",
+    "environment_overlay_commit_sha": "2222222222222222222222222222222222222222",
+    "rendered_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "external_secret_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "image_and_chart_digest_set_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "required_evidence": [
+    {
+      "control": "P1-P4",
+      "kind": "secret-store-identity",
+      "reference": "evidence:EXAMPLE-P1-P4",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "status": "required"
+    },
+    {
+      "control": "P5-P7",
+      "kind": "cluster-security",
+      "reference": "evidence:EXAMPLE-P5-P7",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "status": "required"
+    },
+    {
+      "control": "P8-P12",
+      "kind": "gitops-runtime",
+      "reference": "evidence:EXAMPLE-P8-P12",
+      "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "status": "required"
+    },
+    {
+      "control": "P13-P18",
+      "kind": "assurance-review",
+      "reference": "evidence:EXAMPLE-P13-P18",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "status": "required"
+    }
+  ],
+  "automated_checks": [
+    {
+      "name": "external-secrets-overlay-validation",
+      "run_reference": "ci:EXAMPLE-0001",
+      "source_commit_sha": "1111111111111111111111111111111111111111",
+      "status": "passed"
+    }
+  ],
+  "review": {
+    "independent_reviewer_role": "role:independent-security-reviewer",
+    "review_outcome": "pending_authorized_signature",
+    "findings_reference": "NONE",
+    "exception_reference": "NONE"
+  },
+  "promotion_decision": {
+    "decision": "pending_authorized_signature",
+    "gitops_reconciler_reference": "gitops:example-reconciler",
+    "rollback_reference": "runbook:EXAMPLE-ROLLBACK",
+    "post_promotion_verification_reference": "runbook:EXAMPLE-POST-PROMOTION"
+  },
+  "signature": {
+    "status": "not_signed",
+    "algorithm": "alg:pending-ministry-policy",
+    "signer_key_id": "key:pending-ministry-signer",
+    "signature_reference": "signature:pending-authorization",
+    "signature_value": "PENDING_AUTHORIZED_SIGNATURE"
+  }
+}

@@ -13,6 +13,8 @@ This directory contains **fail-closed orchestration scripts** for target-side S2
 | `validate-maritime-feed-dr-evidence.sh` | Verifies structural consistency, secure local modes, runbook/artifact binding, runner-digest binding, and integrity-attestation metadata for a completed maritime DR bundle. | No. |
 | `validate-target-acceptance-readiness.sh` | Reports whether required control names, non-secret references, runner/verifier paths and approved digests are ready. It never enables execution or contacts a target. | No. |
 | `validate-target-evidence-bundle.sh` | Verifies an authorised S2 or S3 evidence bundle offline, including v3 manifest/summary bindings and retained file hashes. It does not cryptographically verify a KMS/HSM signature itself. | No. |
+| `validate-protected-promotion-closeout-attestation.sh` | Validates a template, pending candidate or asserted approved promotion-closeout attestation offline, including candidate digest binding and evidence grouping. It never verifies a Ministry signature, contacts a target or establishes approval. | No. |
+| `schemas/blueeconomy.protected-promotion-closeout.v1.schema.json` | Repository-owned structural JSON Schema baseline for closeout attestations. Ministry policy, signer authorization and signature trust remain externally governed. | No. |
 | `lib/target_test_common.sh` | Shared authorisation, path, mode, immutable runner/verifier digest, manifest, integrity-attestation, result, and sensitive-field validation. | No. |
 
 ## Dry-run validation
@@ -88,6 +90,27 @@ After all cases have passed, the wrapper writes a canonical `evidence-manifest.j
 The verifier receives `TARGET_TEST_EVIDENCE_MANIFEST`, `TARGET_TEST_INTEGRITY_ATTESTATION`, `TARGET_TEST_SUITE`, `TARGET_TEST_TARGET_ENVIRONMENT`, `TARGET_TEST_RUN_ID`, `TARGET_TEST_RUNBOOK_SHA256`, and `TARGET_TEST_ARTIFACT_ROOT_ID`. It must create `integrity-attestation.json` using schema `blueeconomy.evidence-integrity.v1`, bind the exact SHA-256 of the manifest, and provide a trusted signature reference and signer key identifier. The wrapper validates the binding but does not itself hold a private key or substitute for the Ministry’s KMS/HSM verification service.
 
 A runner that receives a scenario it does not support must fail before action. It must not replace a target case with a mock, synthetic partner, placeholder endpoint, or locally generated assertion.
+
+## Protected-promotion closeout structural validation
+
+The repository supplies a structural baseline schema and an offline validator for promotion closeout records. They validate only the payload’s form, candidate commit/digest bindings, required P1–P18 evidence grouping, forbidden sensitive-content markers, and explicit template/pending/approved status profiles. They deliberately **do not** fetch evidence, query a target, access a KMS/HSM, validate signer authorization, verify a cryptographic signature, or establish a Ministry approval.
+
+```bash
+# Explicitly non-authoritative template validation.
+./validate-protected-promotion-closeout-attestation.sh \
+  --attestation /absolute/path/to/template.json --mode template
+
+# Pending candidate, bound to the immutable release candidate values.
+./validate-protected-promotion-closeout-attestation.sh \
+  --attestation /absolute/path/to/candidate.json --mode candidate \
+  --expected-source-commit <40-hex> \
+  --expected-overlay-commit <40-hex> \
+  --expected-rendered-manifest-sha256 <64-hex> \
+  --expected-external-secret-manifest-sha256 <64-hex> \
+  --expected-image-chart-set-sha256 <64-hex>
+```
+
+The final audit gate must use the Ministry-approved verification service and trusted signer policy to establish cryptographic authenticity, signature validity, signer authorization, revocation/expiry state and evidence-record accessibility before accepting any asserted `approved` payload.
 
 ## Maritime rollback and DR procedure
 
