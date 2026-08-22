@@ -64,9 +64,11 @@ jobs:
             integration/target-verification/reconcile_gitops_deployment_identity.py \
             integration/target-verification/test_reconcile_gitops_deployment_identity.py \
             integration/target-verification/evaluate_offline_revocation_cache.py \
-            integration/target-verification/test_evaluate_offline_revocation_cache.py
+            integration/target-verification/test_evaluate_offline_revocation_cache.py \
+            integration/target-verification/test_offline_revocation_airgap_chaos.py
           python3 integration/target-verification/test_reconcile_gitops_deployment_identity.py
           python3 integration/target-verification/test_evaluate_offline_revocation_cache.py
+          python3 integration/target-verification/test_offline_revocation_airgap_chaos.py
           integration/target-verification/test_run_gitops_reconciliation_pre_pr.sh
 
       - name: Enumerate approved cases without execution
