@@ -118,7 +118,7 @@
       "data_classification": "internal assurance evidence",
       "owner": "Platform Assurance Owner",
       "status": "verified",
-      "last_verified_revision": "0000000000000000000000000000000000000000",
+      "last_verified_revision": "595b73f55005f0ff8ab7ce93a3cb7aa91bf7d0ca",
       "known_limitations": "The manifest records evidence status; it does not authorize production deployment."
     }
   ]
