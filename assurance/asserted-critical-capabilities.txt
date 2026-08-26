@@ -1,0 +1,9 @@
+# Every listed critical assertion must have a manifest entry. Add IDs only after
+# the underlying claim has an approved source of truth and a named owner.
+PLATFORM-GITOPS-DR-001
+MARITIME-EVIDENCE-API-001
+PORT-TENANT-RLS-001
+ADMIN-OIDC-TRUST-001
+CREDENTIAL-STATUS-001
+FINANCIAL-CONTROLS-001
+PLATFORM-ASSURANCE-MANIFEST-001
