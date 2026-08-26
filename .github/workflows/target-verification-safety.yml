@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - 'integration/target-verification/**'
+      - 'deploy/kustomize/**'
       - '.github/workflows/target-verification-safety.yml'
   push:
     branches:
       - main
     paths:
       - 'integration/target-verification/**'
+      - 'deploy/kustomize/**'
       - '.github/workflows/target-verification-safety.yml'
 
 permissions:
