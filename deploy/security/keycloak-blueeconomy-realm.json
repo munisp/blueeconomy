@@ -4,7 +4,7 @@
   "displayName": "Blue Economy Platform",
   "sslRequired": "external",
   "registrationAllowed": false,
-  "resetPasswordAllowed": false,
+  "resetPasswordAllowed": true,
   "bruteForceProtected": true,
   "permanentLockout": false,
   "failureFactor": 5,
@@ -14,7 +14,7 @@
   "accessTokenLifespan": 300,
   "ssoSessionIdleTimeout": 900,
   "ssoSessionMaxLifespan": 28800,
-  "roles": {"realm": [{"name":"platform-admin"},{"name":"s1-operator"},{"name":"s2-analyst"},{"name":"s3-finance-approver"},{"name":"s4-verifier"},{"name":"tenant-admin"},{"name":"audit-reader"}]},
+  "roles": {"realm": [{"name":"platform-admin"},{"name":"s1-operator"},{"name":"s2-analyst"},{"name":"s3-finance-approver"},{"name":"s4-verifier"},{"name":"tenant-admin"},{"name":"audit-reader"},{"name":"onboarding-approver"},{"name":"underwriter"},{"name":"underwriter-approver"},{"name":"claims-adjuster"},{"name":"claims-approver"},{"name":"insurer-aggregator"}]},
   "clients": [{
     "clientId": "platform-apisix",
     "enabled": true,
